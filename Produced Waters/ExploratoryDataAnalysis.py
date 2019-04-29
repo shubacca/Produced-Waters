@@ -15,6 +15,26 @@ import matplotlib as pyplot
 file = 'Texas Wells.xlsx'
 df = pd.read_excel(file)
 
+def levenshtein(s1, s2):
+    if len(s1) < len(s2):
+        return levenshtein(s2, s1)
+
+    # len(s1) >= len(s2)
+    if len(s2) == 0:
+        return len(s1)
+
+    previous_row = range(len(s2) + 1)
+    for i, c1 in enumerate(s1):
+        current_row = [i + 1]
+        for j, c2 in enumerate(s2):
+            insertions = previous_row[j + 1] + 1 # j+1 instead of j since previous_row and current_row are one character longer
+            deletions = current_row[j] + 1       # than s2
+            substitutions = previous_row[j] + (c1 != c2)
+            current_row.append(min(insertions, deletions, substitutions))
+        previous_row = current_row
+    
+    return previous_row[-1]
+
 def fill_values_with_API(column):
     """
     Filling in missing values using similar API codes; column is a str
@@ -84,8 +104,11 @@ for formation in df_drop.FORMATION:
         formations.append(formation)
 
 # selecting known wells with API numbers
+# df_drop is the dataframe with all the data (with and w/o API with 27 rows)
+df_drop = df_drop[['LATITUDE','LONGITUDE','API','BASIN','WELLNAME','DATECOMP','DATESAMPLE','FORMATION','PERIOD','DEPTHUPPER','DEPTHLOWER','DEPTHWELL','LITHOLOGY','SG','SPGRAV','PH','TDSUSGS','TDS','HCO3','Ca','Cl','KNa','Mg','Na','SO4','H2S','cull_chargeb']]
 APIm = df_drop[df_drop.API.notnull()]              #dropped from 19388 to 8208
-APIm = APIm[['LATITUDE','LONGITUDE','API','BASIN','STATE','DATECOMP','DATESAMPLE','FORMATION','PERIOD','DEPTHUPPER','DEPTHLOWER','DEPTHWELL','LITHOLOGY','SG','SPGRAV','PH','TDSUSGS','TDS','HCO3','Ca','Cl','KNa','Mg','Na','SO4','H2S','cull_chargeb']]
+#APIm = APIm[['LATITUDE','LONGITUDE','API','BASIN','WELLNAME','DATECOMP','DATESAMPLE','FORMATION','PERIOD','DEPTHUPPER','DEPTHLOWER','DEPTHWELL','LITHOLOGY','SG','SPGRAV','PH','TDSUSGS','TDS','HCO3','Ca','Cl','KNa','Mg','Na','SO4','H2S','cull_chargeb']]
+
 
 # converting dates to datetime
 APIm.DATECOMP = pd.to_datetime(APIm.DATECOMP)
@@ -96,7 +119,76 @@ API_dup = APIm[APIm.duplicated('API')]              #3448
 API_orig = APIm[~APIm.duplicated('API')]            #4760
 
 # how many unique well names are there?
-API_unique = APIm.groupby('API').nunique()         #4760 unique instances
+API_unique = APIm.groupby('API').nunique()         #4760 unique API instances
+lat_unique = APIm.groupby('LATITUDE').nunique()    #4485 unique LAT instances
+lon_unique = APIm.groupby('LONGITUDE').nunique()   #4455 unique LONG instances
+wname_unique = APIm.groupby('WELLNAME').nunique()  #5777 unique WNAME instances
+
+# trying out the Levenshtein system
+well_name_sorted = df_drop.WELLNAME.sort_values().reset_index()
+for i, name_well in enumerate(well_name_sorted.WELLNAME):
+    if i != 0:
+        lev_distance = levenshtein(name_well,well_name_sorted.WELLNAME[i-1])
+        if lev_distance >0 and lev_distance < 3:
+            # for typo correction/QC
+            print(i, name_well,well_name_sorted.WELLNAME[i-1], lev_distance)
+            
+    if i == 500:
+        break
+
+
+# testing to fill in missing API values
+
+column = 'API'
+col_missing = df_drop[df_drop[column].isnull()].reset_index()   
+#a_df = pd.concat([col_missing.LATITUDE, col_missing.LONGITUDE])   
+#prev_val = sum(APIm[column].isnull())
+count_API = 0
+count_depth = 0
+
+for x, row in col_missing.iterrows():
+    if pd.notnull(row.LATITUDE) and pd.notnull(row.LONGITUDE):
+        #print(x, row)
+        slices = df_drop[df_drop.LATITUDE.isin([row.LATITUDE]) & df_drop.LONGITUDE.isin([row.LONGITUDE])]
+        #print(slices)
+        
+        if pd.notnull(slices.API).any():
+            count_API += 1 
+            print(x)
+            print(slices.loc[:,['WELLNAME','API','BASIN','FORMATION','DATESAMPLE','DEPTHUPPER','DEPTHLOWER']])
+        
+        if pd.notnull(slices.DEPTHUPPER).any() and pd.notnull(slices.DEPTHLOWER).any():
+            count_depth += 1
+            print(x)
+            print(slices.loc[:,['WELLNAME','API','BASIN','FORMATION','DATESAMPLE','DEPTHUPPER','DEPTHLOWER']])
+    
+    if x == 200:
+        break
+    
+    """
+        slices = APIm[APIm.API.isin([API_count])]
+        slices = slices.reset_index()
+        #print(slices.head())
+        s1 = 0
+    
+        if pd.notnull(slices[column]).any():            
+            for i,val in enumerate(slices[column]):
+            
+        #if the block of wells with this particular API have any of latitudes/longitudes
+        #filled in, then fill them up or down with that latitude and longitude
+            
+                s1 = np.nansum([val,s1])
+                #print(APIm.loc[slices['index'][i],column])
+                APIm.loc[slices['index'][i],column] = s1
+                #print(APIm.loc[slices['index'][i],column])
+    
+    after_val = sum(APIm[column].isnull())
+    """
+
+
+
+
+
 """
 ---------------------------------------------------------------------
 lat_missing = APIm[APIm.LATITUDE.isnull()]         #36 missing
@@ -126,6 +218,8 @@ print(sum(pd.notnull(APIm.LATITUDE)))           #only 2 got filled for latitudes
 ---------------------------------------------------------------------
 """
 
+
+"""
 a = fill_values_with_API('LATITUDE')
 print(a)
 
@@ -137,8 +231,12 @@ print(c)
 
 d = fill_DEPTH_with_API('DEPTHLOWER')          #917 DEPTHLOWER filled
 print(d)
+"""
 
+
+"""
 fig = plt.figure()
+
 ax = pyplot.subplots(figsize=(11.7,8.27))
 ax.scatter(APIm.LONGITUDE, APIm.LATITUDE, APIm.DEPTHUPPER, cmap='viridis',s=60)
 
@@ -148,6 +246,9 @@ sns.scatterplot(x=APIm.LONGITUDE, y=APIm.LATITUDE, hue=APIm.TDSUSGS)
 
 plt.tight_layout()
 plt.show()
+"""
+
+
 
 """
 ---------------------------------------------------------------------
