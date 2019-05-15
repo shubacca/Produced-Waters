@@ -15,6 +15,18 @@ import matplotlib as pyplot
 file = 'Texas Wells.xlsx'
 df = pd.read_excel(file)
 
+wellName_QC_memory = pd.DataFrame(columns=['MainIndex','CurrentWellName','PreviousWellName','LevDistance'])
+
+"""
+def WELLNAME_correction_QC(lev_df_ind_list):
+    #sending in list of type int indices from the lev_df dataframe
+    global wellName_QC_memory
+    for element in lev_df_ind_list:
+        wellName_QC_memory = wellName_QC_memory.append(lev_df.loc[element,:])
+        
+    return wellName_QC_memory
+"""
+
 def levenshtein(s1, s2):
     if len(s1) < len(s2):
         return levenshtein(s2, s1)
@@ -105,7 +117,7 @@ for formation in df_drop.FORMATION:
 
 # selecting known wells with API numbers
 # df_drop is the dataframe with all the data (with and w/o API with 27 rows)
-df_drop = df_drop[['LATITUDE','LONGITUDE','API','BASIN','WELLNAME','DATECOMP','DATESAMPLE','FORMATION','PERIOD','DEPTHUPPER','DEPTHLOWER','DEPTHWELL','LITHOLOGY','SG','SPGRAV','PH','TDSUSGS','TDS','HCO3','Ca','Cl','KNa','Mg','Na','SO4','H2S','cull_chargeb']]
+df_drop = df_drop[['LATITUDE','LONGITUDE','API','USREGION','BASIN','COUNTY','WELLNAME','WELLTYPE','DATECOMP','DATESAMPLE','FORMATION','PERIOD','DEPTHUPPER','DEPTHLOWER','DEPTHWELL','SPGRAV','PH','TDSUSGS','HCO3','Ca','Cl','KNa','Mg','Na','SO4','H2S','cull_chargeb']]
 APIm = df_drop[df_drop.API.notnull()]              #dropped from 19388 to 8208
 #APIm = APIm[['LATITUDE','LONGITUDE','API','BASIN','WELLNAME','DATECOMP','DATESAMPLE','FORMATION','PERIOD','DEPTHUPPER','DEPTHLOWER','DEPTHWELL','LITHOLOGY','SG','SPGRAV','PH','TDSUSGS','TDS','HCO3','Ca','Cl','KNa','Mg','Na','SO4','H2S','cull_chargeb']]
 
@@ -118,25 +130,49 @@ APIm.DATESAMPLE = pd.to_datetime(APIm.DATESAMPLE)
 API_dup = APIm[APIm.duplicated('API')]              #3448
 API_orig = APIm[~APIm.duplicated('API')]            #4760
 
+# Groupby statistics
 # how many unique well names are there?
 API_unique = APIm.groupby('API').nunique()         #4760 unique API instances
 lat_unique = APIm.groupby('LATITUDE').nunique()    #4485 unique LAT instances
 lon_unique = APIm.groupby('LONGITUDE').nunique()   #4455 unique LONG instances
 wname_unique = APIm.groupby('WELLNAME').nunique()  #5777 unique WNAME instances
 
+# well counts by wellnames
+well_density = df_drop.groupby(['LATITUDE','LONGITUDE'])['WELLNAME'].count().sort_values(ascending=False).reset_index()
+
+# geo comparisons of well depths upper, lower and point depths (mean, std, count)
+depth_geo = df_drop.groupby(['LATITUDE','LONGITUDE'])['DEPTHUPPER','DEPTHLOWER','DEPTHWELL'].agg(['mean','std','count']).reset_index()
+depth_geo.columns = depth_geo.columns.droplevel()
+depth_geo.columns = ['LATITUDE','LONGITUDE','DUmean','DUstd','DUcount','DLmean','DLstd','DLcount','Dmean','Dstd','Dcount']
+"""
+--------------------------------------------------------------------------------------------------
 # trying out the Levenshtein system
+lev_df = pd.DataFrame(columns=['MainIndex','CurrentWellName','PreviousWellName','LevDistance'])
+
 well_name_sorted = df_drop.WELLNAME.sort_values().reset_index()
-for i, name_well in enumerate(well_name_sorted.WELLNAME):
-    if i != 0:
-        lev_distance = levenshtein(name_well,well_name_sorted.WELLNAME[i-1])
-        if lev_distance >0 and lev_distance < 3:
+for i in range(2000,19388):
+    #i += 18000
+    if i != 0 and pd.notnull(well_name_sorted.WELLNAME[i]):
+        #print(i, well_name_sorted.WELLNAME[i],well_name_sorted.WELLNAME[i-1])
+        lev_distance = levenshtein(well_name_sorted.WELLNAME[i],well_name_sorted.WELLNAME[i-1])
+        if lev_distance > 0 and lev_distance < 3:
             # for typo correction/QC
-            print(i, name_well,well_name_sorted.WELLNAME[i-1], lev_distance)
+            lev_df.loc[i-1, 'MainIndex'] = i
+            lev_df.loc[i-1, 'CurrentWellName'] = well_name_sorted.WELLNAME[i]
+            lev_df.loc[i-1, 'PreviousWellName'] = well_name_sorted.WELLNAME[i-1]
+            lev_df.loc[i-1, 'LevDistance'] = lev_distance
             
-    if i == 500:
+            #print(i, name_well,well_name_sorted.WELLNAME[i-1], lev_distance)
+            
+    #if i == 2000:
+    if i == 19387:
+        print(lev_df[['CurrentWellName','PreviousWellName']])
         break
+--------------------------------------------------------------------------------------------------
+"""
 
-
+"""
+---------------------------------------------------------------------------------------------------------
 # testing to fill in missing API values
 
 column = 'API'
@@ -165,7 +201,10 @@ for x, row in col_missing.iterrows():
     if x == 200:
         break
     
-    """
+    
+---------------------------------------------------------------------------------------------------------
+"""
+"""
         slices = APIm[APIm.API.isin([API_count])]
         slices = slices.reset_index()
         #print(slices.head())
@@ -183,7 +222,7 @@ for x, row in col_missing.iterrows():
                 #print(APIm.loc[slices['index'][i],column])
     
     after_val = sum(APIm[column].isnull())
-    """
+"""
 
 
 
