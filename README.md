@@ -2,13 +2,13 @@
 
 The current repository contains code and reports analyzing the produced water characteristics from onshore wells drilled in Texas between 1920 and 2010. The dataset has been obtained from the United States Geological Survey (USGS) National Produced Waters Database v2.3. 
 
-![Alt text](https://github.com/shubacca/Produced-Waters/blob/master/Produced%20Waters/Pictures/basins%20and%20well%20locations.jpg)
-
 The questions that I am trying to answer are: 
 
 i) whether water characteristics were significantly different before the Permian oil shale revolution in 2012, indicating that water contamination has increased due to the introduction of hydraulic fracturing; 
 
 ii) whether depths of wells can be regressed using water quality parameters and origin basins. 
+
+![Alt text](https://github.com/shubacca/Produced-Waters/blob/master/Produced%20Waters/Pictures/basins%20and%20well%20locations.jpg)
 
 Hydraulic fracturing was introduced after 2012 and with advances in horizontal and automated drilling, long horizontal wells started being drilled to fracture shale rock formations under the surface of the earth. The largest oil shale formation exists in the Permian basin region of Texas, Oklahoma and New Mexico. I have decided to look at Texas wells only as a proof-of-concept that can be applied throughout the USA and Canada with shale formations.
 
