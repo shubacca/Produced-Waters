@@ -1,8 +1,6 @@
 # Springboard Capstone Project 1: Texas Oil Wells Produced Water Dataset Analysis before the Permian Oil Shale Revolution (1920 - 2010)
 
-The current repository contains code and reports analyzing the produced water characteristics from onshore wells drilled in Texas between 1920 and 2010. The dataset has been obtained from the United States Geological Survey (USGS) National Produced Waters Database v2.3. 
-
-The questions that I am trying to answer are: 
+The current repository contains code and reports analyzing the produced water characteristics from onshore wells drilled in Texas between 1920 and 2010. The dataset has been obtained from the United States Geological Survey (USGS) National Produced Waters Database v2.3. The questions that I am trying to answer are: 
 
 i) whether water characteristics were significantly different before the Permian oil shale revolution in 2012, indicating that water contamination has increased due to the introduction of hydraulic fracturing; 
 
