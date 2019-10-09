@@ -17,3 +17,5 @@ The report can be found <a href='https://github.com/shubacca/Produced-Waters/blo
 The Jupyter Notebook associated with this report can be found <a href='https://nbviewer.jupyter.org/github/shubacca/Produced-Waters/blob/master/Produced%20Waters/Data%20Analysis%20on%20Texas%20Produced%20Water%20Dataset.ipynb'> here. </a>
 
 The slide deck presentation can be found <a href='https://github.com/shubacca/Produced-Waters/blob/master/Produced%20Waters/Project%20Deliverables/Slide%20Deck.pdf'> here. </a>
+
+The two questions posed at the beginning of the study were satisfactorily answered by the analyses: i) the post-Oil Shale Revolution produced waters were significantly higher in TDS concentrations from the pre-revolution waters, found using bootstrapping techniques. This result can possibly be attributed to the drilling of more horizontal wells with more minerals and salts seeping in, or the addition of frac fluids; ii) given a R2 score of 0.98 on the test data, the Random Forest model was best able to determine the TDS values given other datapoints. This was trained on a combination of categorical basin and well type values, and continuous water variables. 
