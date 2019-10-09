@@ -13,6 +13,8 @@ Hydraulic fracturing was introduced after 2012 and with advances in horizontal a
 
 Produced water emerges from the earth along with oil and gas, as wells are drilled and cased (completed). Before the shale oil revolution, Texas was producing from different basins across the state. Due to the introduction of frac fluids, one of the hypotheses is that the total dissolved solids (TDS) concentrations have increased. The answer to this question may be important to study the effects of fracking on the environment, produced water quality in this case. Governments, NGOs, oil producers, water and wastewater companies, politicians, municipalities close to the Permian/Midland region should all find this problem significant. 
 
+_Please download the following files and run them locally, as they may not show up online properly._
+
 The report can be found <a href='https://github.com/shubacca/Produced-Waters/blob/master/Produced%20Waters/Project%20Deliverables/Capstone%20Project%201%20Final%20Report.docx'> here. </a>
 
 The Jupyter Notebook associated with this report can be found <a href='https://github.com/shubacca/Produced-Waters/blob/master/Produced%20Waters/Data%20Analysis%20on%20Texas%20Produced%20Water%20Dataset.ipynb'> here. </a>
