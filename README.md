@@ -18,6 +18,6 @@ _Please download the following files and run them locally, as they may not show 
 
 The report can be found <a href='https://github.com/shubacca/Produced-Waters/blob/master/Produced%20Waters/Project%20Deliverables/Capstone%20Project%201%20Final%20Report.docx'> here. </a>
 
-The Jupyter Notebook associated with this report can be found <a href='https://github.com/shubacca/Produced-Waters/blob/master/Produced%20Waters/Data%20Analysis%20on%20Texas%20Produced%20Water%20Dataset.ipynb'> here. </a>
+The Jupyter Notebook associated with this report can be found <a href='https://nbviewer.jupyter.org/github/shubacca/Produced-Waters/blob/master/Produced%20Waters/Data%20Analysis%20on%20Texas%20Produced%20Water%20Dataset.ipynb'> here. </a>
 
 The slide deck presentation can be found <a href='https://github.com/shubacca/Produced-Waters/blob/master/Produced%20Waters/Project%20Deliverables/Slide%20Deck.pptx'> here. </a>
