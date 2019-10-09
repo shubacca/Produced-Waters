@@ -4,7 +4,7 @@ The current repository contains code and reports analyzing the produced water ch
 
 i) whether water characteristics were significantly different before the Permian oil shale revolution in 2012, indicating that water contamination has increased due to the introduction of hydraulic fracturing; 
 
-ii) whether depths of wells can be regressed using water quality parameters and origin basins. 
+ii) whether TDS values of wells can be regressed using water quality parameters and origin basins. 
 
 ![Alt text](https://github.com/shubacca/Produced-Waters/blob/master/Produced%20Waters/Pictures/basins%20and%20well%20locations.jpg)
 
